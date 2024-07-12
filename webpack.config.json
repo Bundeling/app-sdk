@@ -1,0 +1,7 @@
+{
+  "output": {
+    "library": "bundeling",
+    "libraryTarget": "window",
+    "filename": "bundeling-app-sdk.js"
+  }
+}

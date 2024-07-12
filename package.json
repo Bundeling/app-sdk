@@ -1,0 +1,26 @@
+{
+  "name": "@bundeling/app-sdk",
+  "version": "1.0.0",
+  "description": "Bundeling App SDK provides functions used for creating plugins inside the app.",
+  "main": "src/index.js",
+  "scripts": {
+    "prepublish": "./node_modules/.bin/webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bundeling/app-sdk.git"
+  },
+  "keywords": [
+    "Bundeling"
+  ],
+  "author": "Bundeling Group B.V.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bundeling/app-sdk/issues"
+  },
+  "homepage": "https://github.com/Bundeling/app-sdk#readme",
+  "devDependencies": {
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
