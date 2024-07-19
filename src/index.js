@@ -1,3 +1,5 @@
+import navigate from "./navigate";
+
 export {default as navigate} from "./navigate";
 
 export let appdetails = {
@@ -45,4 +47,13 @@ export function alert(title, content) {
 
 export function toast(title, content) {
     return sendToApp("toast", { title, content });
+}
+
+export default {
+    navigate: navigate,
+    openFile: openFile,
+    shareUrl: shareUrl,
+    openUrl: openUrl,
+    alert: alert,
+    toast: toast
 }
