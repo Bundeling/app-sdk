@@ -7,12 +7,16 @@ export let appdetails = {
 };
 
 export function sendToApp(type, params) {
-    const message = { type, ...params };
+    const message = {type, ...params};
 
-    if(typeof window.BundelingBridge !== 'undefined') {
+    const target = window['cordova_iab'] ?? window['webkit'].messageHandlers['cordova_iab'] ?? window.parent;
+
+    if (typeof window.BundelingBridge !== 'undefined') {
         window.BundelingBridge.postMessage(JSON.stringify(message));
+    } else if(window['cordova_iab'] ?? window['webkit'].messageHandlers['cordova_iab'] ?? false) {
+        target.postMessage(JSON.stringify(message));
     } else {
-        window.parent.postMessage(message, "*");
+        target.postMessage(message, "*");
     }
 
 }
