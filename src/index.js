@@ -9,11 +9,15 @@ export let appdetails = {
 export function sendToApp(type, params) {
     const message = {type, ...params};
 
-    const target = window['cordova_iab'] ?? window['webkit'].messageHandlers['cordova_iab'] ?? window.parent;
+    const target =
+        window['cordova_iab'] ??
+        (window['webkit'] && window['webkit'].messageHandlers && window['webkit'].messageHandlers['cordova_iab']) ??
+        window.parent;
 
     if (typeof window.BundelingBridge !== 'undefined') {
         window.BundelingBridge.postMessage(JSON.stringify(message));
-    } else if(window['cordova_iab'] ?? window['webkit'].messageHandlers['cordova_iab'] ?? false) {
+    } else if(window['cordova_iab'] ??
+        (window['webkit'] && window['webkit'].messageHandlers && window['webkit'].messageHandlers['cordova_iab']) ?? false) {
         target.postMessage(JSON.stringify(message));
     } else {
         target.postMessage(message, "*");
