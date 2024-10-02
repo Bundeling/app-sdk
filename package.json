@@ -1,6 +1,6 @@
 {
   "name": "@bundeling/app-sdk",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bundeling App SDK provides functions used for creating plugins inside the app.",
   "main": "src/index.js",
   "scripts": {

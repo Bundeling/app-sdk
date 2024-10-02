@@ -50,11 +50,11 @@ export function openUrl(url) {
 }
 
 export function alert(title, content) {
-    return sendToApp("modal", { title, content });
+    return sendToApp("rawmodal", { title, content });
 }
 
 export function toast(title, content) {
-    return sendToApp("toast", { title, content });
+    return sendToApp("rawtoast", { title, content });
 }
 
 export default {
