@@ -6,6 +6,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: sonarqube-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: SonarQube Code scan
@@ -20,7 +24,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          RUNNER_DEBUG: 1
 
       # Fails the workflow if the Quality Gate fails
 #      - uses: sonarsource/sonarqube-quality-gate-action@v1
