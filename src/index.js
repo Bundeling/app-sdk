@@ -2,59 +2,86 @@ import navigate from "./navigate";
 
 export {default as navigate} from "./navigate";
 
-export let appdetails = {
+const allowed_origins = [
+    "undefined",
+    "web.bundeling.com",
+    "web.bundeling-staging.com",
+]
+
+let app_details = {
     type: "app-legacy"
-};
+}
 
 export function sendToApp(type, params) {
     const message = {type, ...params};
 
-    const target =
-        window['cordova_iab'] ??
-        (window['webkit'] && window['webkit'].messageHandlers && window['webkit'].messageHandlers['cordova_iab']) ??
-        window.parent;
+    const target = getTarget();
 
     if (typeof window.BundelingBridge !== 'undefined') {
-        window.BundelingBridge.postMessage(JSON.stringify(message));
-    } else if(window['cordova_iab'] ??
-        (window['webkit'] && window['webkit'].messageHandlers && window['webkit'].messageHandlers['cordova_iab']) ?? false) {
+        target.postMessage(JSON.stringify(message));
+    } else if (window['cordova_iab'] ??
+        (window['webkit']?.messageHandlers?.['cordova_iab'] ?? false)) {
         target.postMessage(JSON.stringify(message));
     } else {
-        target.postMessage(message, "*");
+        target.postMessage(message);
     }
 
 }
 
-window.addEventListener("message", function (e) {
-    if(e.data && e.data.type) {
-        switch(e.data.type) {
-            case 'appdetails':
-                appdetails = e.data;
-                break;
+function registerListener(callback) {
+    getTarget().addEventListener("message", function (e) {
+        if (!allowed_origins.includes(e.origin)) {
+            return;
         }
-    }
-});
 
-sendToApp("getAppDetails");
+        if (e.data?.type && e.data.type === "appdetails") {
+            setAppDetails(e.data);
+        }
+    });
+
+    if (typeof callback === 'function') {
+        callback();
+    }
+}
+
+function getTarget() {
+    return typeof window.BundelingBridge !== 'undefined' ? window.BundelingBridge :
+        window['cordova_iab'] ??
+        window['webkit']?.messageHandlers?.['cordova_iab'] ??
+        window.parent;
+}
+
+registerListener(function () {
+        sendToApp("getAppDetails");
+    }
+)
 
 export function openFile(url) {
-    return sendToApp("openfile", { href: url });
+    return sendToApp("openfile", {href: url});
 }
 
 export function shareUrl(url) {
-    return sendToApp("shareurl", { href: url });
+    return sendToApp("shareurl", {href: url});
 }
 
 export function openUrl(url) {
-    return sendToApp("openurl", { href: url });
+    return sendToApp("openurl", {href: url});
 }
 
 export function alert(title, content) {
-    return sendToApp("rawmodal", { title, content });
+    return sendToApp("rawmodal", {title, content});
 }
 
 export function toast(title, content) {
-    return sendToApp("rawtoast", { title, content });
+    return sendToApp("rawtoast", {title, content});
+}
+
+export function getAppDetails() {
+    return app_details;
+}
+
+export function setAppDetails(details) {
+    app_details = details;
 }
 
 export default {

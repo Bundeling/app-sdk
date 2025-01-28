@@ -1,10 +1,10 @@
-import {appdetails, sendToApp} from "./index";
+import {getAppDetails, sendToApp} from "./index";
 import {routes} from "./routes";
 
 function getRoute(route, params) {
 
-    if(appdetails && appdetails.type) {
-        const app = appdetails.type;
+    if(getAppDetails()?.type) {
+        const app = getAppDetails().type;
         if(!routes[app]){
             throw new Error(`Unsupported app [${app}]`);
         }
