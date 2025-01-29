@@ -23,7 +23,7 @@ export function sendToApp(type, params) {
         (window['webkit']?.messageHandlers?.['cordova_iab'] ?? false)) {
         target.postMessage(JSON.stringify(message));
     } else {
-        target.postMessage(message);
+        target.postMessage(message, "*");
     }
 
 }
