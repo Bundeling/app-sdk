@@ -2,59 +2,66 @@ import navigate from "./navigate";
 
 export {default as navigate} from "./navigate";
 
-const allowed_origins = [
-    "undefined",
-    "web.bundeling.com",
-    "web.bundeling-staging.com",
-]
-
 let app_details = {
     type: "app-legacy"
+}
+
+const _pending = {};
+
+function _generateId() {
+    try {
+        return crypto.randomUUID();
+    } catch (_) {
+        return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
 }
 
 export function sendToApp(type, params) {
     const message = {type, ...params};
 
-    const target = getTarget();
-
-    if (typeof window.BundelingBridge !== 'undefined') {
-        target.postMessage(JSON.stringify(message));
-    } else if (window['cordova_iab'] ??
-        (window['webkit']?.messageHandlers?.['cordova_iab'] ?? false)) {
-        target.postMessage(JSON.stringify(message));
-    } else {
-        target.postMessage(message, "*");
+    // Mobile: flutter_inappwebview handler (returns Promise)
+    if (window.flutter_inappwebview) {
+        return window.flutter_inappwebview.callHandler('BundelingBridge', JSON.stringify(message));
     }
 
-}
+    // Legacy: cordova bridge (fire-and-forget)
+    const cordovaTarget = window['cordova_iab'] ??
+        window['webkit']?.messageHandlers?.['cordova_iab'];
+    if (cordovaTarget) {
+        cordovaTarget.postMessage(JSON.stringify(message));
+        return Promise.resolve();
+    }
 
-function registerListener(callback) {
-    getTarget().addEventListener("message", function (e) {
-        if (!allowed_origins.includes(e.origin)) {
-            return;
-        }
+    // Web/iframe: postMessage with correlation ID
+    const id = _generateId();
+    message._id = id;
 
-        if (e.data?.type && e.data.type === "appdetails") {
-            setAppDetails(e.data);
-        }
+    return new Promise((resolve) => {
+        _pending[id] = resolve;
+        window.parent.postMessage(message, "*");
     });
-
-    if (typeof callback === 'function') {
-        callback();
-    }
 }
 
-function getTarget() {
-    return typeof window.BundelingBridge !== 'undefined' ? window.BundelingBridge :
-        window['cordova_iab'] ??
-        window['webkit']?.messageHandlers?.['cordova_iab'] ??
-        window.parent;
-}
-
-registerListener(function () {
-        sendToApp("getAppDetails");
+// Listen for correlation responses (web/iframe mode)
+window.addEventListener("message", function (e) {
+    if (e.data?._id && _pending[e.data._id]) {
+        const resolve = _pending[e.data._id];
+        delete _pending[e.data._id];
+        resolve(e.data.result);
     }
-)
+});
+
+// Request app details on init
+sendToApp("getAppDetails").then((result) => {
+    if (result) {
+        try {
+            const details = typeof result === 'string' ? JSON.parse(result) : result;
+            setAppDetails(details);
+        } catch (e) {
+            // Ignore parse errors
+        }
+    }
+});
 
 export function openFile(url) {
     return sendToApp("openfile", {href: url});
