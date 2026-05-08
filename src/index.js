@@ -25,8 +25,6 @@ function generateRequestId() {
 export function sendToApp(type, params) {
     const message = {type, ...params};
 
-	console.debug('sending', message);
-
     // Flutter mobile webview: bridge handler returns a Promise that resolves
     // with the handler's result (e.g. { success: true, data: {...} }).
     if (window.flutter_inappwebview) {

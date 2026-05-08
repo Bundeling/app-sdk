@@ -16,9 +16,7 @@ function getRoute(route, params) {
         if(app === "app-legacy") {
             return {route: _route, params: params};
         } else {
-			console.debug(params);
             for(let [key, value] of Object.entries(params)) {
-				console.debug(key, value);
                 _route = _route.replace(`:${key}`, value);
             }
             return {route: _route, params: params};
