@@ -24,8 +24,11 @@ export const routes = {
         'user': 'user/:uuid',
         'userlist': 'user',
 
-        'customer': 'customer/:uuid',
-        'customerlist': 'customer',
+        'customer': 'user_group/:uuid',
+        'customerlist': 'user_group',
+
+        'usergroup': 'user_group/:uuid',
+        'usergrouplist': 'user_group',
 
         'news': 'news/:uuid',
         'newslist': 'news',
