@@ -21,24 +21,47 @@ export const routes = {
         'appcms': 'appLink',
     },
     'app': {
-        'user': 'user/:id',
-        'userlist': 'users',
+        'user': 'user/:uuid',
+        'userlist': 'user',
 
-        'customer': 'customer/:id',
+        'customer': 'customer/:uuid',
         'customerlist': 'customer',
 
-        'news': 'news/:id',
-        'newslistlist': 'newslist',
+        'news': 'news/:uuid',
+        'newslist': 'news',
 
-        'event': 'event/:id',
+        'event': 'event/:uuid',
         'eventlist': 'event',
+        'eventcalendar': 'event/calendar',
 
-        'message': 'message/:id',
+        'match': 'match/:uuid',
+        'matchlist': 'match',
+        'matchcalendar': 'match/calendar',
+
+        'poll': 'poll/:uuid',
+        'polllist': 'poll',
+
+        'bulletinboard': 'bulletinboard/:uuid',
+        'bulletinboardlist': 'bulletinboard/board/:boardId',
+
+        'tickets': 'tickets',
+        'ticketscanner': 'ticketScanner',
+
+        'message': 'message/:uuid',
         'messagelist': 'message',
 
-        'chat': 'chat/:id',
+        'chat': 'chat/:uuid',
         'chatlist': 'chat',
 
-        'appcms': 'appcms',
+        'form': 'form/:form_uuid',
+
+        'appcms': 'app_cms/:childUuid',
+        'appcmsmenu': 'app_cms_menu/:menuUuid',
+
+        'timeline': 'timeline',
+        'search': 'search',
+        'settings': 'settings',
+        'connection': 'connection',
+        'personalfiles': 'personalfiles',
     },
 }

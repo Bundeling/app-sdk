@@ -1,40 +1,85 @@
 // navigate.test.js
 import navigate from '../src/navigate';
+import { setAppDetails } from '../src/index';
+
+function expectPosted(expectedMessage) {
+    expect(window.parent.postMessage).toHaveBeenCalledTimes(1);
+    const [message, targetOrigin] = window.parent.postMessage.mock.calls[0];
+    expect(targetOrigin).toBe('*');
+    expect(message).toEqual(expect.objectContaining(expectedMessage));
+    expect(typeof message._id).toBe('string');
+}
 
 describe('Navigate Tests', () => {
-    test('navigate.news should navigate to news', () => {
+    beforeEach(() => {
         window.parent.postMessage = jest.fn();
-        navigate.news('123');
-        expect(window.parent.postMessage).toHaveBeenCalledWith({ type: 'navigate', route: 'newsDetail', params: { id: '123', replace: false } }, "*");
+        setAppDetails({ type: 'app' });
     });
 
-    test('navigate.news should navigate to news with replace', () => {
-        window.parent.postMessage = jest.fn();
-        navigate.news('123', true);
-        expect(window.parent.postMessage).toHaveBeenCalledWith({ type: 'navigate', route: 'newsDetail', params: { id: '123', replace: true } }, "*");
+    const routeCases = [
+        ['user',              { uuid: 'abc' },        'user/abc'],
+        ['userlist',          {},                     'user'],
+        ['customer',          { uuid: 'abc' },        'customer/abc'],
+        ['customerlist',      {},                     'customer'],
+        ['news',              { uuid: 'abc' },        'news/abc'],
+        ['newslist',          {},                     'news'],
+        ['event',             { uuid: 'abc' },        'event/abc'],
+        ['eventlist',         {},                     'event'],
+        ['eventcalendar',     {},                     'event/calendar'],
+        ['match',             { uuid: 'abc' },        'match/abc'],
+        ['matchlist',         {},                     'match'],
+        ['matchcalendar',     {},                     'match/calendar'],
+        ['poll',              { uuid: 'abc' },        'poll/abc'],
+        ['polllist',          {},                     'poll'],
+        ['bulletinboard',     { uuid: 'abc' },        'bulletinboard/abc'],
+        ['bulletinboardlist', { boardId: 'b1' },      'bulletinboard/board/b1'],
+        ['tickets',           {},                     'tickets'],
+        ['ticketscanner',     {},                     'ticketScanner'],
+        ['message',           { uuid: 'abc' },        'message/abc'],
+        ['messagelist',       {},                     'message'],
+        ['chat',              { uuid: 'abc' },        'chat/abc'],
+        ['chatlist',          {},                     'chat'],
+        ['form',              { form_uuid: 'f1' },    'form/f1'],
+        ['appcms',            { childUuid: 'c1' },    'app_cms/c1'],
+        ['appcmsmenu',        { menuUuid: 'm1' },     'app_cms_menu/m1'],
+        ['timeline',          {},                     'timeline'],
+        ['search',            {},                     'search'],
+        ['settings',          {},                     'settings'],
+        ['connection',        {},                     'connection'],
+        ['personalfiles',     {},                     'personalfiles'],
+    ];
+
+    describe('push', () => {
+        test.each(routeCases)('push(%s) routes to %s', (route, params, expected) => {
+            navigate.push(route, params);
+            expectPosted({ type: 'navigate', route: expected, params: params });
+        });
+
+        test('throws for unknown route', () => {
+            expect(() => navigate.push('nonExistentRoute', {})).toThrow('Route [nonExistentRoute] does not exist');
+        });
+
+        test('accepts undefined params for parameterless routes', () => {
+            navigate.push('userlist');
+            expectPosted({ type: 'navigate', route: 'user' });
+        });
     });
 
-    test('navigate.newslist should navigate to newslist', () => {
-        window.parent.postMessage = jest.fn();
-        navigate.newslist('456');
-        expect(window.parent.postMessage).toHaveBeenCalledWith({ type: 'navigate', route: 'feedList', params: { id: '456', replace: false } }, "*");
+    describe('replace', () => {
+        test.each(routeCases)('replace(%s) routes to %s with replace=true', (route, params, expected) => {
+            navigate.replace(route, params);
+            expectPosted({ type: 'navigate', route: expected, params: params, replace: true });
+        });
+
+        test('throws for unknown route', () => {
+            expect(() => navigate.replace('nonExistentRoute', {})).toThrow('Route [nonExistentRoute] does not exist');
+        });
     });
 
-    test('navigate.event should navigate to event', () => {
-        window.parent.postMessage = jest.fn();
-        navigate.event('789');
-        expect(window.parent.postMessage).toHaveBeenCalledWith({ type: 'navigate', route: 'newsDetail', params: { id: '789', replace: false } }, "*");
+    describe('back', () => {
+        test('sends a back message', () => {
+            navigate.back();
+            expectPosted({ type: 'back' });
+        });
     });
-
-    test('navigate.event should navigate to event with replace', () => {
-        window.parent.postMessage = jest.fn();
-        navigate.event('789', true);
-        expect(window.parent.postMessage).toHaveBeenCalledWith({ type: 'navigate', route: 'newsDetail', params: { id: '789', replace: true } }, "*");
-    });
-
-    test('navigate should throw error for non-existent route', () => {
-        window.parent.postMessage = jest.fn();
-        expect(() => navigate.navigate('nonExistentRoute', {})).toThrow('Route [nonExistentRoute] does not exist');
-    });
-
 });
