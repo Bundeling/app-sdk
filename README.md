@@ -48,8 +48,8 @@ The @bundeling/app-sdk provides a variety of methods to interact with Bundeling 
 | openFile         | url: string                     | Opens a file in the Bundeling app.                             |
 | shareUrl         | url: string                     | Shares a URL using the Bundeling app's sharing functionality.  |
 | openUrl          | url: string                     | Opens a URL in the Bundeling app's browser.                    |
-| alert            | message: string, title?: string | Displays an alert dialog with a message and an optional title. |
-| toast            | message: string                 | Displays a toast message at the bottom of the screen.          |
+| alert            | title: string, content?: string | Displays an alert dialog with a message and an optional title. |
+| toast            | title: string, content?: string | Displays a toast message at the bottom of the screen.          |
 
 ### Navigation
 Navigation is performed by calling `navigate.push(route, params)` to push a new view, or `navigate.replace(route, params)` to replace the current view. Path parameters in the underlying route (e.g. `:uuid`) are substituted from `params` by name.

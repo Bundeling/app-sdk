@@ -19,8 +19,8 @@ describe('Navigate Tests', () => {
     const routeCases = [
         ['user',              { uuid: 'abc' },        'user/abc'],
         ['userlist',          {},                     'user'],
-        ['customer',          { uuid: 'abc' },        'customer/abc'],
-        ['customerlist',      {},                     'customer'],
+        ['customer',          { uuid: 'abc' },        'user_group/abc'],
+        ['customerlist',      {},                     'user_group'],
         ['news',              { uuid: 'abc' },        'news/abc'],
         ['newslist',          {},                     'news'],
         ['event',             { uuid: 'abc' },        'event/abc'],
