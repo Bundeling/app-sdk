@@ -40,37 +40,70 @@ window.bundeling.openUrl('https://bundeling.com/contact');
 ### Available Methods
 The @bundeling/app-sdk provides a variety of methods to interact with Bundeling services. Here are the available methods:
 
-| Method   | Parameters                      | Description                                                    |
-|----------|---------------------------------|----------------------------------------------------------------|
-| navigate | path: string                    | Navigates to a specified path within the Bundeling app.        |
-| openFile | url: string                     | Opens a file in the Bundeling app.                             |
-| shareUrl | url: string                     | Shares a URL using the Bundeling app's sharing functionality.  |
-| openUrl  | url: string                     | Opens a URL in the Bundeling app's browser.                    |
-| alert    | message: string, title?: string | Displays an alert dialog with a message and an optional title. |
-| toast    | message: string                 | Displays a toast message at the bottom of the screen.          |
+| Method           | Parameters                      | Description                                                    |
+|------------------|---------------------------------|----------------------------------------------------------------|
+| navigate.push    | route: string, params?: object  | Pushes a named route onto the navigation stack.                |
+| navigate.replace | route: string, params?: object  | Replaces the current view with a named route.                  |
+| navigate.back    | -                               | Navigates back to the previous view.                           |
+| openFile         | url: string                     | Opens a file in the Bundeling app.                             |
+| shareUrl         | url: string                     | Shares a URL using the Bundeling app's sharing functionality.  |
+| openUrl          | url: string                     | Opens a URL in the Bundeling app's browser.                    |
+| alert            | title: string, content?: string | Displays an alert dialog with a message and an optional title. |
+| toast            | title: string, content?: string | Displays a toast message at the bottom of the screen.          |
 
-### Navigation methods
-The navigate method allows you to navigate to different pages within the Bundeling app.
+### Navigation
+Navigation is performed by calling `navigate.push(route, params)` to push a new view, or `navigate.replace(route, params)` to replace the current view. Path parameters in the underlying route (e.g. `:uuid`) are substituted from `params` by name.
 
 Example:
 ```javascript
-navigate.user('123');
-```
-| Method      | Parameters |
-|-------------|------------|
-| user        | id: string | 
-| userlist    | -          |
-| news        | id: string |
-| newslist    | -          |
-| event       | id: string |
-| eventlist   | -          |
-| message     | id: string |
-| messagelist | -          |
-| chat        | id: string |
-| chatlist    | -          |
-| appcms      | id: string |
+import { navigate } from '@bundeling/app-sdk';
 
-*Id's can be a numeric ID or UUID depending on the Bundeling App version*
+// Push the user detail page onto the stack
+navigate.push('user', { uuid: '123' });
+
+// Replace the current view with a list
+navigate.replace('userlist');
+
+// Go back
+navigate.back();
+```
+
+#### Available routes
+
+| Route               | Path                              | Required params |
+|---------------------|-----------------------------------|-----------------|
+| user                | user/:uuid                        | uuid            |
+| userlist            | user                              | -               |
+| customer            | customer/:uuid                    | uuid            |
+| customerlist        | customer                          | -               |
+| news                | news/:uuid                        | uuid            |
+| newslist            | news                              | -               |
+| event               | event/:uuid                       | uuid            |
+| eventlist           | event                             | -               |
+| eventcalendar       | event/calendar                    | -               |
+| match               | match/:uuid                       | uuid            |
+| matchlist           | match                             | -               |
+| matchcalendar       | match/calendar                    | -               |
+| poll                | poll/:uuid                        | uuid            |
+| polllist            | poll                              | -               |
+| bulletinboard       | bulletinboard/:uuid               | uuid            |
+| bulletinboardlist   | bulletinboard/board/:boardId      | boardId         |
+| tickets             | tickets                           | -               |
+| ticketscanner       | ticketScanner                     | -               |
+| message             | message/:uuid                     | uuid            |
+| messagelist         | message                           | -               |
+| chat                | chat/:uuid                        | uuid            |
+| chatlist            | chat                              | -               |
+| form                | form/:form_uuid                   | form_uuid       |
+| appcms              | app_cms/:childUuid                | childUuid       |
+| appcmsmenu          | app_cms_menu/:menuUuid            | menuUuid        |
+| timeline            | timeline                          | -               |
+| search              | search                            | -               |
+| settings            | settings                          | -               |
+| connection          | connection                        | -               |
+| personalfiles       | personalfiles                     | -               |
+
+*Identifier values can be a numeric ID or UUID depending on the Bundeling App version.*
 
 ## Support
 If you encounter any issues or have questions, please check the [issues page](https://github.com/bundeling/app-sdk/issues) on the GitHub repository or contact Bundeling support at support@bundeling.com.
