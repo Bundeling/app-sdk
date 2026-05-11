@@ -2,6 +2,7 @@ import {getAppDetails, sendToApp} from "./index";
 import {routes} from "./routes";
 
 function getRoute(route, params) {
+	params = params || {}
 
     if(getAppDetails()?.type) {
         const app = getAppDetails().type;
@@ -16,7 +17,7 @@ function getRoute(route, params) {
             return {route: _route, params: params};
         } else {
             for(let [key, value] of Object.entries(params)) {
-                _route.replace(`:${key}`, value);
+                _route = _route.replace(`:${key}`, value);
             }
             return {route: _route, params: params};
         }
@@ -24,35 +25,15 @@ function getRoute(route, params) {
 }
 
 export default {
-    navigate: function(route, params) {
+    push: function(route, params) {
         return sendToApp("navigate", getRoute(route, params));
+    },
+
+    replace: function(route, params) {
+        return sendToApp("navigate", {...getRoute(route, params), replace: true});
     },
 
     back: function() {
         return sendToApp("back");
     },
-
-    /**
-     * @param newsId string | number legacy apps use ID's the other ones use UUID's
-     * @param replace boolean When setting replace to true the current view will be replaced with the new view
-     */
-    news: function(newsId, replace = false) {
-        return this.navigate('news', { id: newsId, replace: replace });
-    },
-
-    /**
-     * @param categoryId string | number legacy apps use ID's the other ones use UUID's
-     * @param replace boolean When setting replace to true the current view will be replaced with the new view
-     */
-    newslist: function(categoryId, replace = false) {
-        return this.navigate('newslist', { id: categoryId, replace: replace });
-    },
-
-    /**
-     * @param eventId string | number legacy apps use ID's the other ones use UUID's
-     * @param replace boolean When setting replace to true the current view will be replaced with the new view
-     */
-    event: function(eventId, replace = false) {
-        return this.navigate('news', { id: eventId, replace: replace });
-    }
 }
